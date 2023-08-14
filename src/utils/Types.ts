@@ -1,5 +1,6 @@
+
 export interface BreadCrumbsType {
-    text: string,
-    href?: string;
-    onClick?: () => void
+    text:string,
+    href?:string,
+    onClick?:()=> void;
 }

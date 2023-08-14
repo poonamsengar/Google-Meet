@@ -3,13 +3,14 @@ import { EuiProvider,EuiThemeColorMode,EuiThemeProvider } from "@elastic/eui";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { Routes, Route } from "react-router-dom";
-import { useAppDispatch, useAppSelectore } from "./app/hooks";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import ThemeSelector from "./components/ThemeSelector";
 import CreateMeeting from "./pages/CreateMeeting";
-import OneOnOneMeeting from "./utils/OneOnOneMeeting";
+import OnOneOnMeeting from "./pages/OnOneOnMeeting";
 
 const App = () => {
   const dispatch = useAppDispatch();
-  const isDarkTheme = useAppSelectore((zoom) => zoom.auth.isDarkTheme);
+  const isDarkTheme = useAppSelector((zoom) => zoom.auth.isDarkTheme);
   const [theme, setTheme] = useState<EuiThemeColorMode>("light");
   const [isInitialTheme, setInitialTheme] = useState(true);
   useEffect(() => {
@@ -34,17 +35,19 @@ const App = () => {
     },
   };
   return (
+      <ThemeSelector> 
     <EuiProvider colorMode={theme}>
       <EuiThemeProvider modify={overrides}>
         <Routes>
           <Route path="/Login" element={<Login />} />
           <Route path="/CreateMeeting" element={<CreateMeeting />} />
-          <Route path="/1neOn1neMeeting" element={<OneOnOneMeeting/>}/>
+          <Route path="/create1on1" element={<OnOneOnMeeting />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="*" element={<Dashboard />} />
         </Routes>
       </EuiThemeProvider>
     </EuiProvider>
+    </ThemeSelector>
   );
 };
 

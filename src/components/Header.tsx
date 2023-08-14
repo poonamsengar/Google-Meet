@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAppSelectore } from '../app/hooks'
+import { useAppSelector } from '../app/hooks'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { EuiHeader, EuiText } from '@elastic/eui'
@@ -7,13 +7,13 @@ import { EuiTextColor, EuiFlexItem, EuiButtonIcon, EuiFlexGroup } from '@elastic
 import { signOut } from 'firebase/auth'
 import { firebaseAuth } from '../utils/FirebaseConfig'
 import { changeTheme } from '../app/slices/AuthSlice'
-import { getCreateMeetingCrumbs } from '../utils/breadCrumbs'
+import { getCreateMeetingBreadCrubs } from '../utils/breadCrumbs'
 
 const Header = () => {
     const navigate = useNavigate()
     const location = useLocation()
-    const username = useAppSelectore((zoom) => zoom.auth.userInfo?.name);
-    const isDarkTheme = useAppSelectore((zoom) => zoom.auth.isDarkTheme);
+    const username = useAppSelector((zoom) => zoom.auth.userInfo?.name);
+    const isDarkTheme = useAppSelector((zoom) => zoom.auth.isDarkTheme);
 
     const [breadCrumbs, setBreadCrumbs] = useState([{ text: "Dashboard" }]);
     const [iseResponsive, setIsResponsive] = useState(false);
@@ -23,11 +23,12 @@ const Header = () => {
         signOut(firebaseAuth)
     }
 
-    useEffect(()=>{
-      const {pathname} = location;
-      if(pathname === "/CreateMeeting") 
-      setBreadCrumbs(getCreateMeetingCrumbs(navigate))
-    },[location,navigate])
+    useEffect(() =>{
+        const {pathname} = location;
+        if(pathname === "/CreateMeeting")
+        setBreadCrumbs(getCreateMeetingBreadCrubs(navigate))
+    }, [location,navigate])
+    
 
     const invertTheme = ()=>{
         const theme = localStorage.getItem("zoom-theme");
@@ -91,22 +92,21 @@ const Header = () => {
         ]
     },
     {
-      items: [
-          <EuiFlexGroup justifyContent='center' alignItems='center' direction='row' style={{ gap: "2vw" }}>
-              <EuiFlexItem grow={false} style={{ flexBasis: "fit-content" }} >
-                  { isDarkTheme ? (
-                      <EuiButtonIcon onClick={invertTheme} iconType="sun" display="fill" size="s" color="warning" aria-label="invert-theme-button" />
-                      ):(
-                      <EuiButtonIcon onClick={invertTheme} iconType="moon" display="fill" size="s" color="text" aria-label="invert-theme-button" />
-                  )}
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} style={{ flexBasis: "fit-content" }}>
-                  <EuiButtonIcon onClick={logout} iconType="lock" display="fill" size="s" aria-label="logout-button" />
-              </EuiFlexItem>
-          </EuiFlexGroup>
-      ]
-  }
-
+        items: [
+            <EuiFlexGroup justifyContent='center' alignItems='center' direction='row' style={{ gap: "2vw" }}>
+                <EuiFlexItem grow={false} style={{ flexBasis: "fit-content" }} >
+                    { isDarkTheme ? (
+                        <EuiButtonIcon onClick={invertTheme} iconType="sun" display="fill" size="s" color="warning" aria-label="invert-theme-button" />
+                        ):(
+                        <EuiButtonIcon onClick={invertTheme} iconType="moon" display="fill" size="s" color="text" aria-label="invert-theme-button" />
+                    )}
+                </EuiFlexItem>
+                <EuiFlexItem grow={false} style={{ flexBasis: "fit-content" }}>
+                    <EuiButtonIcon onClick={logout} iconType="lock" display="fill" size="s" aria-label="logout-button" />
+                </EuiFlexItem>
+            </EuiFlexGroup>
+        ]
+    }
     ];
 
     useEffect(() => {

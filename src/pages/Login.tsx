@@ -52,7 +52,7 @@ const Login = () => {
   }
   
   return (
-    <EuiProvider colorMode="dark">
+    <EuiProvider colorMode="dark" >
       <EuiFlexGroup
         alignItems="center"
         justifyContent="center"

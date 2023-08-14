@@ -1,32 +1,34 @@
-import { createSlice } from "@reduxjs/toolkit/dist";
+import { createSlice } from "@reduxjs/toolkit";
 
-interface authInitialState{
-    userInfo: 
+interface authInitialState {
+    userInfo:
     | {
         uid:string;
-        email:string;
+        email:string; 
         name:string;
-      }
+     }
     | undefined;
-    isDarkTheme: false;
-}
+    isDarkTheme:boolean;
 
+};
 const initialState: authInitialState =  {
     userInfo:undefined,
-    isDarkTheme:false,
+    isDarkTheme: false,
 };
 
 export const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers:{
-        changeTheme:(state, action)=>{
-            state.isDarkTheme=action.payload.isDarkTheme;
+        changeTheme:(state, action) => {
+            state.isDarkTheme = action.payload.isDarkTheme;
         },
-        setUser:(state,action)=>{
-            state.userInfo=action.payload;
+        setUser:(state,action) =>{
+            state.userInfo= action.payload ;
         }
     },
 });
 
-export const {setUser,changeTheme} = authSlice.actions;
+export const {setUser, changeTheme} = authSlice.actions;
+
+
