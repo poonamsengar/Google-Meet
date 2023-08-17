@@ -1,26 +1,42 @@
-import { EuiComboBox, EuiFormRow } from '@elastic/eui';
-import React from 'react'
+import { EuiComboBox, EuiFormRow } from "@elastic/eui";
+import { invalid } from "moment";
+import { string } from "prop-types";
+import React from "react";
 
 const MeetingUsersField = ({
-    label,
-    options,
-    onChange,
-    selectedOptions,
-    isClearable,
-    placeholder,
-}:{
-    label:string;
-    options:any;
-    onChange:any;
-    selectedOptions: any;
-    isClearable:boolean;
-    placeholder:string;
+  label,
+  options,
+  onChange,
+  selectedOptions,
+  isClearable,
+  placeholder,
+  singleSelection = false,
+  isInvalid,
+  error
+}: {
+  label: string;
+  options: any;
+  onChange: any;
+  selectedOptions: any;
+  isClearable: boolean;
+  placeholder: string;
+  singleSelection: any;
+  isInvalid:boolean;
+  error:Array<string>;
 }) => {
   return (
-   <EuiFormRow label={label}>
-        <EuiComboBox/>
-   </EuiFormRow>
-  )
-}
+    <EuiFormRow label={label} isInvalid={isInvalid} error={error}>
+      <EuiComboBox
+        options={options}
+        onChange={onChange}
+        selectedOptions={selectedOptions}
+        singleSelection={singleSelection}
+        placeholder={placeholder}
+        isClearable={isClearable}
+        isInvalid={isInvalid}
+      />
+    </EuiFormRow>
+  );
+};
 
-export default MeetingUsersField
+export default MeetingUsersField;
