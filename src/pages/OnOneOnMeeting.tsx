@@ -8,14 +8,23 @@ import useAuth from '../hooks/useAuth'
 import MeetingDataField from '../components/FormComponents/MeetingDataField'
 import moment from "moment";
 import CreateMeetinButtons from '../components/FormComponents/CreateMeetinButtons'
-import { FieldErrorType } from '../utils/Types'
 import { addDoc } from 'firebase/firestore'
+import { meetingsRef } from '../utils/FirebaseConfig'
+import generateMeetingID from '../utils/generateMeetingID'
+import { useAppSelector } from '../app/hooks'
+import { useNavigate } from 'react-router-dom'
+import useToast from '../hooks/useToast'
+import { FieldErrorType, UserType } from '../utils/Types'
+
 
 const OnOneOnMeeting = () => {
   useAuth();
   const [users] = useFetchUsers();
+  const navigate = useNavigate()
+  const [createToast] = useToast();
+  const uid = useAppSelector((zoom)=> zoom.auth.userInfo?.uid)
   const [meetingName, setMeetingName] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState<Array<UserType>>([]);
   const [startDate, setStartDate] = useState(moment());
   const [showErrors, setShowErrors] = useState<{
     meetingName: FieldErrorType;
@@ -54,17 +63,24 @@ const OnOneOnMeeting = () => {
     setShowErrors(clonedShowErrors);
     return errors;
   };
-  const createMeeting = () => {
+  const createMeeting = async() => {
     if (!validateForm()) {
       const meetingId = generateMeetingID();
-      await addDoc(meetingRef,{
+      await addDoc(meetingsRef ,{
         createBy:uid,
         meetingId,
         meetingName,
         meetingType:"1-on-1",
-        invitedUsers:[selectedUsers[0]],
+        invitedUsers:[selectedUsers[0].uid],
         meetingDate:startDate.format("L"),
+        maxUser:1,
+        status:true,
       })
+      createToast({
+        title:"One on One Meeting Created successfull",
+        type: "success",
+      })
+      navigate("/")
     }
   }
   return (

@@ -10,7 +10,25 @@ export interface UserType{
     uid:string;
     label?:string
 }
+
+export type MeetingJoinType = "anyone-can-join" | "video-conference" | "1-on-1";
+export interface MeetingType{
+    docId?: string;
+    createBy:string;
+    invitedUsers:Array<string>;
+    maxUsers:number;
+    meetingDate:string;
+    meetinId: string;
+    meetingName: string;
+    meetingType: MeetingJoinType;
+    status: boolean;
+}
 export interface FieldErrorType{
     show:boolean;
     message: Array<string>;
+}
+export interface ToastType {
+    id:string;
+    title:string;
+    color:"success" | "primary" | "warning" | "danger" | undefined;   
 }
