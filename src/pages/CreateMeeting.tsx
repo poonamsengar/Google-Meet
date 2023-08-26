@@ -37,7 +37,7 @@ const CreateMeeting = () => {
               icon={<EuiImage size="100%" alt="icon" src={meeting2} />}
               title={`Create Video Conference`}
               description="Invite Group Member "
-              onClick={() => navigate('/videoconference')}
+              onClick={() => navigate('/VideoConference')}
               paddingSize='xl'
             />
             </EuiFlexItem>

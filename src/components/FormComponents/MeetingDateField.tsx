@@ -1,21 +1,22 @@
 import { EuiDatePicker, EuiFormRow } from "@elastic/eui";
+import moment from "moment";
 import React from "react";
 
-const MeetingDataField = ({
+function MeetingDateField({
   selected,
   setStartDate,
 }: {
   selected: moment.Moment;
   setStartDate: React.Dispatch<React.SetStateAction<moment.Moment>>;
-}) => {
+}) {
   return (
-    <EuiFormRow>
+    <EuiFormRow label="Set Meeting Date">
       <EuiDatePicker
         selected={selected}
         onChange={(date) => setStartDate(date!)}
       />
     </EuiFormRow>
   );
-};
+}
 
-export default MeetingDataField;
+export default MeetingDateField;

@@ -15,6 +15,7 @@ import OnOneOnMeeting from "./pages/OnOneOnMeeting";
 import { setToasts } from "./app/slices/meetingSlice";
 import VideoConference from "./pages/VideoConference";
 import MyMeetings from "./pages/MyMeetings";
+import Meeting from "./pages/Meeting";
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -60,6 +61,7 @@ const App = () => {
             <Route path="/create1on1" element={<OnOneOnMeeting />} />
             <Route path="/VideoConference" element={< VideoConference />} />
             <Route path="/mymeetings" element={<MyMeetings/>}  />
+            <Route path="/meetings" element={<Meeting/>}  />
             <Route path="/" element={<Dashboard />} />
             <Route path="*" element={<Dashboard />} />
           </Routes>

@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import Header from '../components/Header'
 import { EuiFlexGroup, EuiForm, EuiSpacer } from '@elastic/eui'
-import MeetingNameField from '../components/FormComponents/MeetingNameField'
-import MeetingUsersField from '../components/FormComponents/MeetingUsersField'
+import MeetingNameField from '../components/FormComponents/MeetingNameFIeld'
+import MeetingUsersField from '../components/FormComponents/MeetingUserField'
 import useFetchUsers from '../hooks/useFetchUsers'
 import useAuth from '../hooks/useAuth'
-import MeetingDataField from '../components/FormComponents/MeetingDataField'
+import MeetingDataField from '../components/FormComponents/MeetingDateField'
 import moment from "moment";
-import CreateMeetinButtons from '../components/FormComponents/CreateMeetinButtons'
+import CreateMeetingButtons from '../components/FormComponents/CreateMeetingButtons'
 import { addDoc } from 'firebase/firestore'
 import { meetingsRef } from '../utils/FirebaseConfig'
 import generateMeetingID from '../utils/generateMeetingID'
@@ -115,7 +115,7 @@ const OnOneOnMeeting = () => {
           />
           <MeetingDataField selected={startDate} setStartDate={setStartDate} />
           <EuiSpacer />
-          <CreateMeetinButtons createMeeting={createMeeting} />
+          <CreateMeetingButtons createMeeting={createMeeting} />
         </EuiForm>
       </EuiFlexGroup>
     </div>

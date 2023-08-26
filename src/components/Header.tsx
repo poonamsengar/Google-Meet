@@ -1,46 +1,53 @@
-import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../app/hooks";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { EuiHeader, EuiText } from "@elastic/eui";
 import {
-  EuiTextColor,
-  EuiFlexItem,
   EuiButtonIcon,
   EuiFlexGroup,
+  EuiFlexItem,
+  EuiHeader,
+  EuiText,
+  EuiTextColor,
 } from "@elastic/eui";
 import { signOut } from "firebase/auth";
-import { firebaseAuth } from "../utils/FirebaseConfig";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAppSelector } from "../app/hooks";
 import { changeTheme } from "../app/slices/AuthSlice";
-import {
-  getCreateMeetingBreadCrubs,
-  getOneonOneMeetingBreadCrumbs,
-  getVideoConferenceneBreadCrumbs,
-} from "../utils/breadCrumbs";
+import { getCreateMeetingBreadCrumbs, getDashboardBreadCrumbs, getMyMeetingsBreadCrumbs, getVideoConferenceBreadCrumbs , getMeetingsBreadCrumbs, getOneOnOneMeetingBreadCrumbs } from "../utils/breadCrumbs";
+import { BreadCrumbsType } from "../utils/Types";
+import { firebaseAuth } from "../utils/FirebaseConfig";
 
-const Header = () => {
+export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
-  const username = useAppSelector((zoom) => zoom.auth.userInfo?.name);
-  const isDarkTheme = useAppSelector((zoom) => zoom.auth.isDarkTheme);
-
-  const [breadCrumbs, setBreadCrumbs] = useState([{ text: "Dashboard" }]);
-  const [iseResponsive, setIsResponsive] = useState(false);
+  const userName = useAppSelector((zoomApp) => zoomApp.auth.userInfo?.name);
+  const isDarkTheme = useAppSelector((zoomApp) => zoomApp.auth.isDarkTheme);
+  const [breadCrumbs, setBreadCrumbs] = useState<Array<BreadCrumbsType>>([
+    {
+      text: "Dashboard",
+    },
+  ]);
   const dispatch = useDispatch();
+  const [isResponsive, setIsResponsive] = useState(false);
+
+  useEffect(() => {
+    const { pathname } = location;
+    if (pathname === "/") setBreadCrumbs(getDashboardBreadCrumbs(navigate));
+    else if (pathname === "/CreateMeeting")
+      setBreadCrumbs(getCreateMeetingBreadCrumbs(navigate));
+    else if (pathname === "/create1on1")
+      setBreadCrumbs(getOneOnOneMeetingBreadCrumbs(navigate));
+    else if (pathname === "/videoconference")
+      setBreadCrumbs(getVideoConferenceBreadCrumbs(navigate));
+    else if (pathname === "/mymeetings")
+      setBreadCrumbs(getMyMeetingsBreadCrumbs(navigate));
+    else if (pathname === "/meetings") {
+      setBreadCrumbs(getMeetingsBreadCrumbs(navigate));
+    }
+  }, [location, navigate]);
 
   const logout = () => {
     signOut(firebaseAuth);
   };
-
-  useEffect(() => {
-    const { pathname } = location;
-    if (pathname === "/CreateMeeting")
-      setBreadCrumbs(getCreateMeetingBreadCrubs(navigate));
-    else if (pathname == "/create1on1")
-      setBreadCrumbs(getOneonOneMeetingBreadCrumbs(navigate));
-    else if (pathname === "/videoConference")
-      setBreadCrumbs(getVideoConferenceneBreadCrumbs(navigate));
-  }, [location, navigate]);
 
   const invertTheme = () => {
     const theme = localStorage.getItem("zoom-theme");
@@ -54,7 +61,7 @@ const Header = () => {
         <Link to="/">
           <EuiText>
             <h2 style={{ padding: "0 1vw" }}>
-              <EuiTextColor color="#0b5cff">zoom</EuiTextColor>
+              <EuiTextColor color="#0b5cff">Zoom</EuiTextColor>
             </h2>
           </EuiText>
         </Link>,
@@ -63,11 +70,11 @@ const Header = () => {
     {
       items: [
         <>
-          {username ? (
+          {userName ? (
             <EuiText>
               <h3>
-                <EuiTextColor color="white">Hello </EuiTextColor>
-                <EuiTextColor color="#0b5cff">{username}</EuiTextColor>
+                <EuiTextColor color="white">Hello, </EuiTextColor>
+                <EuiTextColor color="#0b5cff">{userName}</EuiTextColor>
               </h3>
             </EuiText>
           ) : null}
@@ -90,7 +97,7 @@ const Header = () => {
                 display="fill"
                 size="s"
                 color="warning"
-                aria-label="invert-theme-button"
+                aria-label="theme-button-light"
               />
             ) : (
               <EuiButtonIcon
@@ -99,7 +106,7 @@ const Header = () => {
                 display="fill"
                 size="s"
                 color="text"
-                aria-label="invert-theme-button"
+                aria-label="theme-button-dark"
               />
             )}
           </EuiFlexItem>
@@ -116,13 +123,14 @@ const Header = () => {
       ],
     },
   ];
+
   const responsiveSection = [
     {
       items: [
         <Link to="/">
           <EuiText>
             <h2 style={{ padding: "0 1vw" }}>
-              <EuiTextColor color="#0b5cff"></EuiTextColor>
+              <EuiTextColor color="#0b5cff">Zoom</EuiTextColor>
             </h2>
           </EuiText>
         </Link>,
@@ -144,7 +152,7 @@ const Header = () => {
                 display="fill"
                 size="s"
                 color="warning"
-                aria-label="invert-theme-button"
+                aria-label="theme-button-light"
               />
             ) : (
               <EuiButtonIcon
@@ -152,8 +160,8 @@ const Header = () => {
                 iconType="moon"
                 display="fill"
                 size="s"
-                color="text"
-                aria-label="invert-theme-button"
+                color="ghost"
+                aria-label="theme-button-dark"
               />
             )}
           </EuiFlexItem>
@@ -172,21 +180,28 @@ const Header = () => {
   ];
 
   useEffect(() => {
-    if (window.innerWidth < 480) setIsResponsive(true);
+    if (window.innerWidth < 480) {
+      // sectionSpliced.splice(1, 1);
+      // setSection(sectionSpliced);
+      setIsResponsive(true);
+    }
   }, []);
+
   return (
     <>
       <EuiHeader
         style={{ minHeight: "8vh" }}
         theme="dark"
-        sections={iseResponsive ? responsiveSection : section}
+        sections={isResponsive ? responsiveSection : section}
       />
       <EuiHeader
         style={{ minHeight: "8vh" }}
-        sections={[{ breadcrumbs: breadCrumbs }]}
+        sections={[
+          {
+            breadcrumbs: breadCrumbs,
+          },
+        ]}
       />
     </>
   );
-};
-
-export default Header;
+}

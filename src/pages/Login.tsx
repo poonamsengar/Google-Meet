@@ -12,8 +12,8 @@ import {
 } from "@elastic/eui";
 import animation from "../assets/animation.gif";
 import logo from "../assets/logo.png";
-import { firebaseAuth, userRef } from "../utils/FirebaseConfig"
-import { collection, getDoc, addDoc, getDocs, query, where } from "firebase/firestore"
+import { firebaseAuth, usersRef } from "../utils/FirebaseConfig"
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore"
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../app/hooks";
@@ -37,10 +37,10 @@ const Login = () => {
       user: { displayName, email, uid },
     } = await signInWithPopup(firebaseAuth, provider);
     if (email) {
-      const firestorQuery = query(userRef, where("uid", "==", uid));
+      const firestorQuery = query(usersRef, where("uid", "==", uid));
       const fetchedUser = await getDocs(firestorQuery);
       if (fetchedUser.docs.length === 0) {
-        await addDoc(userRef, {
+        await addDoc(usersRef, {
           uid,
           name: displayName,
           email,

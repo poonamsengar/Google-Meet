@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-import Header from "../components/Header";
 import {
   EuiFlexGroup,
   EuiForm,
@@ -7,94 +5,103 @@ import {
   EuiSpacer,
   EuiSwitch,
 } from "@elastic/eui";
-import MeetingNameField from "../components/FormComponents/MeetingNameField";
-import MeetingUsersField from "../components/FormComponents/MeetingUsersField";
-import useFetchUsers from "../hooks/useFetchUsers";
-import useAuth from "../hooks/useAuth";
-import MeetingDataField from "../components/FormComponents/MeetingDataField";
-import moment from "moment";
-import CreateMeetinButtons from "../components/FormComponents/CreateMeetinButtons";
 import { addDoc } from "firebase/firestore";
+import moment from "moment";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../app/hooks";
+import CreateMeetingButtons from "../components/FormComponents/CreateMeetingButtons";
+import MeetingDateField from "../components/FormComponents/MeetingDateField";
+import MeetingMaximumUsersField from "../components/FormComponents/MeetingMaximumUsersField";
+import MeetingNameField from "../components/FormComponents/MeetingNameFIeld";
+import MeetingUserField from "../components/FormComponents/MeetingUserField";
+
+import Header from "../components/Header";
+import useAuth from "../hooks/useAuth";
+import useFetchUsers from "../hooks/useFetchUsers";
+import useToast from "../hooks/useToast";
 import { meetingsRef } from "../utils/FirebaseConfig";
 import generateMeetingID from "../utils/generateMeetingID";
-import { useAppSelector } from "../app/hooks";
-import { useNavigate } from "react-router-dom";
-import useToast from "../hooks/useToast";
 import { FieldErrorType, UserType } from "../utils/Types";
-import MeetingMaximumUserField from "../components/FormComponents/MeetingMaximumUserField";
 
-const VideoConference = () => {
+export default function VideoConference() {
   useAuth();
   const [users] = useFetchUsers();
-  const navigate = useNavigate();
   const [createToast] = useToast();
-  const uid = useAppSelector((zoom) => zoom.auth.userInfo?.uid);
+  const uid = useAppSelector((zoomApp) => zoomApp.auth.userInfo?.uid);
+  const navigate = useNavigate();
+
   const [meetingName, setMeetingName] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState<Array<UserType>>([]);
+  const [selectedUser, setSelectedUser] = useState<Array<UserType>>([]);
   const [startDate, setStartDate] = useState(moment());
-  const [size, setsize] = useState(1);
-  const [anyoneCanJoin, setAnyoneCanJoin] = useState(false);
+  const [size, setSize] = useState(1);
   const [showErrors, setShowErrors] = useState<{
     meetingName: FieldErrorType;
-    meetingUser: FieldErrorType;
+    meetingUsers: FieldErrorType;
   }>({
     meetingName: {
       show: false,
       message: [],
     },
-    meetingUser: {
+    meetingUsers: {
       show: false,
       message: [],
     },
   });
-  const onUserChange = (selectedOptions: any) => {
-    setSelectedUsers(selectedOptions);
+  const [anyoneCanJoin, setAnyoneCanJoin] = useState(false);
+
+  const onUserChange = (selectedOptions: Array<UserType>) => {
+    setSelectedUser(selectedOptions);
   };
+
   const validateForm = () => {
+    const showErrorsClone = { ...showErrors };
     let errors = false;
-    const clonedShowErrors = { ...showErrors };
     if (!meetingName.length) {
-      showErrors.meetingName.show = true;
-      showErrors.meetingName.message = ["Please Enter Meeting Name"];
+      showErrorsClone.meetingName.show = true;
+      showErrorsClone.meetingName.message = ["Please Enter Meeting Name"];
       errors = true;
     } else {
-      showErrors.meetingName.show = false;
-      showErrors.meetingName.message = [];
+      showErrorsClone.meetingName.show = false;
+      showErrorsClone.meetingName.message = [];
     }
-    if (!selectedUsers.length) {
-      clonedShowErrors.meetingUser.show = true;
-      clonedShowErrors.meetingUser.message = ["Please select User Name"];
+    if (!selectedUser.length && !anyoneCanJoin) {
+      showErrorsClone.meetingUsers.show = true;
+      showErrorsClone.meetingUsers.message = ["Please Select a User"];
+      errors = true;
     } else {
-      clonedShowErrors.meetingUser.show = false;
-      clonedShowErrors.meetingUser.message = [];
+      showErrorsClone.meetingUsers.show = false;
+      showErrorsClone.meetingUsers.message = [];
     }
-    setShowErrors(clonedShowErrors);
+    setShowErrors(showErrorsClone);
     return errors;
   };
+
   const createMeeting = async () => {
     if (!validateForm()) {
       const meetingId = generateMeetingID();
       await addDoc(meetingsRef, {
-        createBy: uid,
+        createdBy: uid,
         meetingId,
         meetingName,
-        meetingType: anyoneCanJoin ? "anyone-can-join" : "video-Conference",
+        meetingType: anyoneCanJoin ? "anyone-can-join" : "video-conference",
         invitedUsers: anyoneCanJoin
           ? []
-          : selectedUsers.map((user: UserType) => user.uid),
+          : selectedUser.map((user: UserType) => user.uid),
         meetingDate: startDate.format("L"),
-        maxUser: anyoneCanJoin ? 100 : size,
+        maxUsers: anyoneCanJoin ? 100 : size,
         status: true,
       });
       createToast({
         title: anyoneCanJoin
-          ? "Anyone can join meeting created successfull"
-          : "video coneference created successfull",
+          ? "Anyone can join meeting created successfully"
+          : "Video Conference created successfully.",
         type: "success",
       });
       navigate("/");
     }
   };
+
   return (
     <div
       style={{
@@ -106,45 +113,44 @@ const VideoConference = () => {
       <Header />
       <EuiFlexGroup justifyContent="center" alignItems="center">
         <EuiForm>
-          <EuiFormRow display="columnCompressedSwitch" label="Anyone can join">
+          <EuiFormRow display="columnCompressedSwitch" label="Anyone can Join">
             <EuiSwitch
               showLabel={false}
-              label="Anyone can join"
+              label="Anyone Can Join"
               checked={anyoneCanJoin}
               onChange={(e) => setAnyoneCanJoin(e.target.checked)}
               compressed
             />
           </EuiFormRow>
+
           <MeetingNameField
-            label="Meeting Name"
-            placeholder="Meeting Name"
-            value={meetingName}
-            setMeetingName={setMeetingName}
+            label="Meeting name"
             isInvalid={showErrors.meetingName.show}
             error={showErrors.meetingName.message}
+            placeholder="Meeting name"
+            value={meetingName}
+            setMeetingName={setMeetingName}
           />
+
           {anyoneCanJoin ? (
-            <MeetingMaximumUserField value={size} setValue={setsize} />
+            <MeetingMaximumUsersField value={size} setSize={setSize} />
           ) : (
-            <MeetingUsersField
-              label="invite User"
+            <MeetingUserField
+              label="Invite Users"
+              isInvalid={showErrors.meetingUsers.show}
+              error={showErrors.meetingUsers.message}
               options={users}
               onChange={onUserChange}
-              selectedOptions={selectedUsers}
-              singleSelection={false}
+              selectedOptions={selectedUser}
               isClearable={false}
-              placeholder="Select a user"
-              isInvalid={showErrors.meetingUser.show}
-              error={showErrors.meetingUser.message}
+              placeholder="Select a Users"
             />
           )}
-          <MeetingDataField selected={startDate} setStartDate={setStartDate} />
+          <MeetingDateField selected={startDate} setStartDate={setStartDate} />
           <EuiSpacer />
-          <CreateMeetinButtons createMeeting={createMeeting} />
+          <CreateMeetingButtons createMeeting={createMeeting} />
         </EuiForm>
       </EuiFlexGroup>
     </div>
   );
-};
-
-export default VideoConference;
+}
