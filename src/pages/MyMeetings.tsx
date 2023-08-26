@@ -71,7 +71,7 @@ const MyMeetings = () => {
       if (meeting.status) {
         if (meeting.meetingDate === moment().format("L")) {
           return <EuiBadge color="success">
-            <Link style={{ color: 'black' }} to={`/join.${meeting.meetingId}`}> Join Now </Link>
+            <Link style={{ color: 'black' }} to={`/join ${meeting.meetingId}`}> Join Now </Link>
           </EuiBadge>
         } else if (moment(meeting.meetingDate).isBefore(moment().format('L'))) {
           return <EuiBadge color="default">Endend</EuiBadge>
