@@ -24,6 +24,7 @@ const Meeting = () => {
                 const myMeetings : Array<MeetingType> = [];
                 fetchedMeetings.forEach((meeting) => {
                     const data = meeting.data() as MeetingType;
+                    console.log(data)
                     if(data.createdBy === userInfo?.uid) myMeetings.push(data);
                     else if(data.meetingType === "anyone-can-join") 
                     myMeetings.push(data);
@@ -35,6 +36,7 @@ const Meeting = () => {
                         myMeetings.push(data);
                      }
                     }
+
                 })
                 setMeetings(myMeetings);
             }
