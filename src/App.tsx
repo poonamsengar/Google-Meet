@@ -63,7 +63,7 @@ const App = () => {
             <Route path="/VideoConference" element={< VideoConference />} />
             <Route path="/mymeetings" element={<MyMeetings/>}  />
             <Route path="/meetings" element={<Meeting/>}  />
-            <Route path="/join:id" element={<JoinMeeting />}/>
+            <Route path="/join/:id" element={<JoinMeeting />}/>
             <Route path="/" element={<Dashboard />} />
             <Route path="*" element={<Login />} />
           </Routes>
