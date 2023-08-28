@@ -71,7 +71,7 @@ const Login = () => {
                 <EuiText textAlign="center" grow={false}>
                   <h3>
                     <EuiTextColor>one plateform to </EuiTextColor>
-                    <EuiTextColor color="#0b5cff"> Connect</EuiTextColor>
+                    <EuiTextColor color="#008000	"> Connect</EuiTextColor>
                   </h3>
                 </EuiText>
                 <EuiSpacer size="l" />
